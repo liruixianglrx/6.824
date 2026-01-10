@@ -8,25 +8,30 @@ package main
 // go build -buildmode=plugin crash.go
 //
 
-import "6.824/mr"
-import crand "crypto/rand"
-import "math/big"
-import "strings"
-import "os"
-import "sort"
-import "strconv"
-import "time"
+import (
+	crand "crypto/rand"
+	"math/big"
+	"os"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
+	"6.824/mr"
+)
 
 func maybeCrash() {
 	max := big.NewInt(1000)
 	rr, _ := crand.Int(crand.Reader, max)
 	if rr.Int64() < 330 {
 		// crash!
+		// fmt.Printf("crashing!\n")
 		os.Exit(1)
 	} else if rr.Int64() < 660 {
 		// delay for a while.
 		maxms := big.NewInt(10 * 1000)
 		ms, _ := crand.Int(crand.Reader, maxms)
+		// fmt.Printf("sleep for %vms \n", ms.Int64())
 		time.Sleep(time.Duration(ms.Int64()) * time.Millisecond)
 	}
 }

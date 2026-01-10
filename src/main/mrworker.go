@@ -12,10 +12,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"strconv"
-	"strings"
-	"unicode"
+	"plugin"
 
 	"6.824/mr"
 )
@@ -34,40 +33,20 @@ func main() {
 // load the application Map and Reduce functions
 // from a plugin file, e.g. ../mrapps/wc.so
 func loadPlugin(filename string) (func(string, string) []mr.KeyValue, func(string, []string) string) {
-	// 	p, err := plugin.Open(filename)
-	// 	if err != nil {
-	// 		log.Fatalf("cannot load plugin %v", filename)
-	// 	}
-	// 	xmapf, err := p.Lookup("Map")
-	// 	if err != nil {
-	// 		log.Fatalf("cannot find Map in %v", filename)
-	// 	}
-	// 	mapf := xmapf.(func(string, string) []mr.KeyValue)
-	// 	xreducef, err := p.Lookup("Reduce")
-	// 	if err != nil {
-	// 		log.Fatalf("cannot find Reduce in %v", filename)
-	// 	}
-	// 	reducef := xreducef.(func(string, []string) string)
-
-	// 	return mapf, reducef
-	mapf := func(filename string, contents string) []mr.KeyValue {
-		// function to detect word separators.
-		ff := func(r rune) bool { return !unicode.IsLetter(r) }
-
-		// split contents into an array of words.
-		words := strings.FieldsFunc(contents, ff)
-
-		kva := []mr.KeyValue{}
-		for _, w := range words {
-			kv := mr.KeyValue{w, "1"}
-			kva = append(kva, kv)
-		}
-		return kva
+	p, err := plugin.Open(filename)
+	if err != nil {
+		log.Fatalf("cannot load plugin %v", filename)
 	}
-
-	reducef := func(key string, values []string) string {
-		// return the number of occurrences of this word.
-		return strconv.Itoa(len(values))
+	xmapf, err := p.Lookup("Map")
+	if err != nil {
+		log.Fatalf("cannot find Map in %v", filename)
 	}
+	mapf := xmapf.(func(string, string) []mr.KeyValue)
+	xreducef, err := p.Lookup("Reduce")
+	if err != nil {
+		log.Fatalf("cannot find Reduce in %v", filename)
+	}
+	reducef := xreducef.(func(string, []string) string)
+
 	return mapf, reducef
 }

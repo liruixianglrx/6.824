@@ -5,13 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch file",
+            "name": "coordinator",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceFolder}/src/main/mrsequential.go",
-            "args": ["wc.so","pg-being_ernest.txt","pg-dorian_gray.txt"]
-        }
+            "program": "${workspaceFolder}/src/main/mrcoordinator.go",
+            "args": ["pg-being_ernest.txt","pg-dorian_gray.txt","pg-frankenstein.txt",
+            "pg-grimm.txt","pg-huckleberry_finn.txt","pg-metamorphosis.txt",
+            "pg-sherlock_holmes.txt","pg-tom_sawyer.txt"]
+        },
+        {
+            "name": "worker",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/src/main/mrworker.go",
+            "args": ["wc.so"]
+        },
 
     ]
 }
